@@ -12,6 +12,6 @@ class CampaignSerializer(serializers.ModelSerializer):
     class Meta:
         model = Campaign
         fields = ['id', 'campaign_id', 'auto_fb_post_mode', 'current_amount', 'goal', 'donators', 'days_active', 'title', 'description', 'has_beneficiary',
-         'user_first_name', 'user_last_name', 'currencyCode', 'visible_in_search', 'campaign_hearts', 'social_share_total','DescriptionLength', 'weekday', 'time_of_day' ]
+         'user_first_name', 'user_last_name', 'currencyCode', 'visible_in_search', 'campaign_hearts', 'social_share_total','DescriptionLength', 'weekday', 'time_of_day', 'url' ]
 
 
