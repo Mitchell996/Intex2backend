@@ -3,10 +3,10 @@ from django.urls import include, path
 
 
 urlpatterns = [
-    path('weekday/', views.CategoryList.as_view()),
-    path('weekday/<int:pk>/', views.CategoryDetail.as_view()),
-    path('campaign/', views.campaignList.as_view()),
-    path('campaign/<int:pk>/', views.campaignDetail.as_view()),
-    path('/', include('client.urls')),
+    path('weekday/', views.WeekdayList.as_view()),
+    path('weekday/<int:pk>/', views.WeekdayDetail.as_view()),
+    path('campaign/', views.CampaignList.as_view()),
+    path('campaign/<int:pk>/', views.CampaignDetail.as_view()),
+    #path('/', include('client.urls')),
 ]
 

@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 import json
-from api.models import Weekday, Campaign, Sale
-from api.serializers import CategorySerializer, ProductSerializer, SaleSerializer
+from api.models import Weekday, Campaign
+from api.serializers import WeekdaySerializer, CampaignSerializer
 import stripe
 
 class WeekdayList(APIView):
@@ -13,9 +13,9 @@ class WeekdayList(APIView):
     @csrf_exempt
     def get(self, request, format=None):
         cats = Weekday.objects.all()
-        if request.query_params.get('weekday'):
-            cats = cats.filter(title__contains=request.query_params.get('weekday'))
-        serializer = CategorySerializer(cats, many=True)
+        if request.query_params.get('day'):
+            cats = cats.filter(title__contains=request.query_params.get('day'))
+        serializer = WeekdaySerializer(cats, many=True)
         return Response(serializer.data)
 
     @csrf_exempt
@@ -27,18 +27,18 @@ class WeekdayList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CategoryDetail(APIView):
+class WeekdayDetail(APIView):
     '''Work with an individual Category object'''
     @csrf_exempt
     def get(self, request, pk, format=None):
-        cat = Category.objects.get(id=pk)
-        serializer = CategorySerializer(cat)
+        cat = Weekday.objects.get(id=pk)
+        serializer = WeekdaySerializer(cat)
         return Response(serializer.data)
 
     @csrf_exempt
     def put(self, request, pk, format=None):
-        cat = Category.objects.get(id=pk)
-        serializer = CategorySerializer(cat, data=request.data)
+        cat = Weekday.objects.get(id=pk)
+        serializer = WeekdaySerializer(cat, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -46,12 +46,12 @@ class CategoryDetail(APIView):
 
     @csrf_exempt
     def delete(self, request, pk, format=None):
-        cat = Category.objects.get(id=pk)
+        cat = Weekday.objects.get(id=pk)
         cat.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ProductList(APIView):
+class CampaignList(APIView):
     '''Get all categories or create a category'''
     @csrf_exempt
     def get(self, request, format=None):
@@ -76,7 +76,7 @@ class ProductList(APIView):
             cats = cats.filter(title__contains=request.query_params.get('description'))
         elif request.query_params.get('price'):
             cats = cats.filter(title__contains=request.query_params.get('price'))
-        serializer = ProductSerializer(cats, many=True)
+        serializer = CampaignSerializer(cats, many=True)
         return Response(serializer.data)
 
     @csrf_exempt
@@ -110,33 +110,4 @@ class CampaignDetail(APIView):
         cat.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class CreateSale(APIView):
-    @csrf_exempt
-    def post(self, request, format=None):
-        body = json.loads(request.body)
-        newSale = Sale()
-        newSale.name = body["name"]
-        newSale.address1 = body["address1"]
-        newSale.address2 = body["address2"]
-        newSale.city = body["city"]
-        newSale.state = body["state"]
-        newSale.zipcode = body["zipcode"]
-        newSale.total = body["total"]
-        newSale.items = body["items"]
-        newSale.payment_intent = stripe.PaymentIntent.create(
-            amount=int(newSale.total * 100),
-            currency ='usd'
-        )
-        newSale.save()
-        return Response({
-            'sale_id': newSale.id,
-            'client_secret':newSale.payment_intent['client_secret'],
-            })
-    @csrf_exempt
-    def get(self, request, pk, format=None):
-        body = json.loads(request.body)
-        #We might want to wait on this one.  I want to know what I'm saving to know what I'm checking
-        #cat = Product.objects.get(id=pk)
-        serializer = ProductSerializer(cat)
-        return Response(serializer.data)
 

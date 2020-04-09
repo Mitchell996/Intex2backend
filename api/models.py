@@ -4,13 +4,6 @@ from jsonfield import JSONField
 class Weekday(models.Model):
     day = models.TextField()
 
-class Product(models.Model):
-    name = models.TextField()
-    category = models.ForeignKey(Category, on_delete=models.PROTECT)
-    description = models.TextField()
-    filename = models.TextField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-
 class Campaign(models.Model):
     url = models.TextField()
     campaign_id = models.TextField()
@@ -30,5 +23,5 @@ class Campaign(models.Model):
     social_share_total = models.TextField()
     DescriptionLength = models.IntegerField()
     weekday = models.ForeignKey(Weekday, on_delete=models.PROTECT)
-    time_of_day = models.DateTimeField()
-    is_charity = models.textField
+    time_of_day = models.TextField()
+    is_charity = models.TextField()
